@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Spring Boot Application",
+			"type": "shell",
+			"command": "mvn",
+			"args": [
+				"spring-boot:run"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "Run Spring Boot Application",
+			"type": "shell",
+			"command": "mvn",
+			"args": [
+				"spring-boot:run"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "Run Spring Boot Application",
+			"type": "shell",
+			"command": "mvn",
+			"args": [
+				"spring-boot:run"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "Run Spring Boot Application",
+			"type": "shell",
+			"command": "mvn",
+			"args": [
+				"spring-boot:run"
+			],
+			"isBackground": true
+		}
+	]
+}

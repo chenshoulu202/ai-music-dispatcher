@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- 控制台输出 (用于IDE开发工具的terminal显示) -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        
+        <!-- 全量日志文件 (所有级别) -->
+        <RollingFile name="AllLevelFileAppender" fileName="logs/ai-music-dispatcher-all.log"
+                     filePattern="logs/$${date:yyyy-MM}/ai-music-dispatcher-all-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        
+        <!-- ERROR级别日志文件 -->
+        <RollingFile name="ErrorFileAppender" fileName="logs/ai-music-dispatcher-error.log"
+                     filePattern="logs/$${date:yyyy-MM}/ai-music-dispatcher-error-%d{yyyy-MM-dd}-%i.log.gz">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n%throwable</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        
+        <!-- WARN级别日志文件 -->
+        <RollingFile name="WarnFileAppender" fileName="logs/ai-music-dispatcher-warn.log"
+                     filePattern="logs/$${date:yyyy-MM}/ai-music-dispatcher-warn-%d{yyyy-MM-dd}-%i.log.gz">
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        
+        <!-- INFO级别日志文件 -->
+        <RollingFile name="InfoFileAppender" fileName="logs/ai-music-dispatcher-info.log"
+                     filePattern="logs/$${date:yyyy-MM}/ai-music-dispatcher-info-%d{yyyy-MM-dd}-%i.log.gz">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    
+    <Loggers>
+        <!-- ROOT Logger: 配置系统所有的日志输出 -->
+        <Root level="info">
+            <!-- 输出到控制台 (IDE Terminal) -->
+            <AppenderRef ref="ConsoleAppender"/>
+            <!-- 输出所有级别到文件 -->
+            <AppenderRef ref="AllLevelFileAppender"/>
+            <!-- 按级别分类输出到各自的文件 -->
+            <AppenderRef ref="ErrorFileAppender"/>
+            <AppenderRef ref="WarnFileAppender"/>
+            <AppenderRef ref="InfoFileAppender"/>
+        </Root>
+        
+        <!-- 应用自身的Logger: DEBUG级别获得更详细日志 -->
+        <Logger name="com.example.aimusicdispatcher" level="debug" additivity="false">
+            <!-- 输出到控制台 (IDE Terminal) -->
+            <AppenderRef ref="ConsoleAppender"/>
+            <!-- 输出所有级别到文件 -->
+            <AppenderRef ref="AllLevelFileAppender"/>
+            <!-- 按级别分类输出到各自的文件 -->
+            <AppenderRef ref="ErrorFileAppender"/>
+            <AppenderRef ref="WarnFileAppender"/>
+            <AppenderRef ref="InfoFileAppender"/>
+        </Logger>
+        
+        <!-- Spring Framework Logger: 只输出WARN及以上级别，减少噪音 -->
+        <Logger name="org.springframework" level="warn" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AllLevelFileAppender"/>
+            <AppenderRef ref="WarnFileAppender"/>
+        </Logger>
+        
+        <!-- Hibernate Logger: 只输出WARN及以上级别 -->
+        <Logger name="org.hibernate" level="warn" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AllLevelFileAppender"/>
+            <AppenderRef ref="WarnFileAppender"/>
+        </Logger>
+    </Loggers>
+</Configuration>

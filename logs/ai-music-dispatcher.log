@@ -1,0 +1,54 @@
+2026-02-22 08:42:57.899 [main] INFO  com.example.aimusicdispatcher.AiMusicDispatcherApplication - Starting AiMusicDispatcherApplication using Java 21.0.5 with PID 94876 (/Users/chenshoulu/Downloads/dy1/target/classes started by chenshoulu in /Users/chenshoulu/Downloads/dy1)
+2026-02-22 08:42:57.905 [main] DEBUG com.example.aimusicdispatcher.AiMusicDispatcherApplication - Running with Spring Boot v3.2.3, Spring v6.1.4
+2026-02-22 08:42:57.907 [main] INFO  com.example.aimusicdispatcher.AiMusicDispatcherApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 08:42:58.570 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-22 08:42:58.637 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 57 ms. Found 2 JPA repository interfaces.
+2026-02-22 08:42:59.235 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 08:42:59.249 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-02-22 08:42:59.252 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 08:42:59.252 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-02-22 08:42:59.298 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 08:42:59.301 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1341 ms
+2026-02-22 08:42:59.494 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-22 08:42:59.552 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-02-22 08:42:59.593 [main] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-02-22 08:42:59.853 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-22 08:42:59.884 [main] INFO  com.zaxxer.hikari.HikariDataSource - AiMusicDispatcherHikariCP - Starting...
+2026-02-22 08:43:00.080 [main] INFO  com.zaxxer.hikari.pool.HikariPool - AiMusicDispatcherHikariCP - Added connection com.mysql.cj.jdbc.ConnectionImpl@3ee258
+2026-02-22 08:43:00.081 [main] INFO  com.zaxxer.hikari.HikariDataSource - AiMusicDispatcherHikariCP - Start completed.
+2026-02-22 08:43:00.126 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 08:43:00.128 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2026-02-22 08:43:01.012 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-22 08:43:01.151 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-22 08:43:01.538 [main] INFO  com.example.aimusicdispatcher.generator.TtsService - TTS output directory initialized: ./tts_output
+2026-02-22 08:43:01.542 [main] INFO  com.example.aimusicdispatcher.scheduler.PlaybackWorker - PlaybackWorker thread started.
+2026-02-22 08:43:01.585 [main] INFO  com.example.aimusicdispatcher.service.MusicSyncService - Starting music library synchronization...
+2026-02-22 08:43:01.825 [main] DEBUG com.example.aimusicdispatcher.service.MusicSyncService - Added new song: 稻香
+2026-02-22 08:43:01.841 [main] INFO  com.example.aimusicdispatcher.service.MusicSyncService - Music library synchronization completed. Added: 1 songs, Removed: 0 songs.
+2026-02-22 08:43:01.884 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-22 08:43:02.242 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-02-22 08:43:02.253 [main] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-02-22 08:43:02.255 [main] INFO  com.example.aimusicdispatcher.connector.BarrageController - Shutting down AI Worker Pool.
+2026-02-22 08:43:02.255 [main] INFO  com.example.aimusicdispatcher.connector.BarrageController - AI Worker Pool shut down.
+2026-02-22 08:43:02.256 [PlaybackWorker] WARN  com.example.aimusicdispatcher.scheduler.PlaybackWorker - PlaybackWorker interrupted, shutting down.
+2026-02-22 08:43:02.256 [main] INFO  com.example.aimusicdispatcher.scheduler.PlaybackWorker - PlaybackWorker thread stopped.
+2026-02-22 08:43:02.256 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-22 08:43:02.258 [main] INFO  com.zaxxer.hikari.HikariDataSource - AiMusicDispatcherHikariCP - Shutdown initiated...
+2026-02-22 08:43:02.265 [main] INFO  com.zaxxer.hikari.HikariDataSource - AiMusicDispatcherHikariCP - Shutdown completed.
+2026-02-22 08:43:02.278 [main] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-22 08:43:02.295 [main] ERROR org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+

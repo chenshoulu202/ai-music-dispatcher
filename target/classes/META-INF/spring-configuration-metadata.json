@@ -1,0 +1,74 @@
+{
+  "groups": [
+    {
+      "name": "gemini",
+      "type": "com.example.aimusicdispatcher.config.GeminiProperties",
+      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties"
+    },
+    {
+      "name": "music",
+      "type": "com.example.aimusicdispatcher.config.MusicProperties",
+      "sourceType": "com.example.aimusicdispatcher.config.MusicProperties"
+    },
+    {
+      "name": "tts",
+      "type": "com.example.aimusicdispatcher.config.TtsProperties",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "gemini.api-key",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties"
+    },
+    {
+      "name": "gemini.api-url",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties",
+      "defaultValue": "https:\/\/generativelanguage.googleapis.com\/v1beta\/models\/gemini-2.0-flash:generateContent?key={apiKey}"
+    },
+    {
+      "name": "gemini.system-prompt",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties",
+      "defaultValue": "你是一个幽默风趣的直播间DJ。请为点歌人[USER]点的歌曲[SONG]写一段30字内的口播。要自然、亲切，能引起观众共鸣。"
+    },
+    {
+      "name": "music.local-path",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.MusicProperties"
+    },
+    {
+      "name": "tts.audio-format",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    },
+    {
+      "name": "tts.output-dir",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    },
+    {
+      "name": "tts.provider",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    },
+    {
+      "name": "tts.rate",
+      "type": "java.lang.Double",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    },
+    {
+      "name": "tts.sample-rate",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    },
+    {
+      "name": "tts.voice",
+      "type": "java.lang.String",
+      "sourceType": "com.example.aimusicdispatcher.config.TtsProperties"
+    }
+  ],
+  "hints": []
+}
