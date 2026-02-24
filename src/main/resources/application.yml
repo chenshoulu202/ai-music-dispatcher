@@ -31,6 +31,19 @@ tts:
   provider: edge-tts # TTS服务提供商（edge-tts）
   voice: zh-CN-liaoning-XiaobeiNeura #zh-CN-XiaoxiaoNeural # Edge语音选择，zh-CN-XiaoxiaoNeural=晓晓(女性), zh-CN-YunyangNeural=云阳(男性)
   rate: -0.15 # 语速调节，范围-1.0到1.0，-0.15为降速15%，听起来更温柔有电台感
-  output-dir: ./tts_output # TTS生成的音频文件输出目录
+  output-dir: /Users/chenshoulu/Downloads/dy1/tts_output # TTS生成的音频文件输出目录
   audio-format: mp3 # 音频格式（mp3、wav等），建议mp3以减少文件大小
   sample-rate: 44100 # 采样率（Hz），与歌曲格式保持一致以避免爆音
+
+# 应用权限配置
+app:
+  permission:
+    enabled: true # 是否启用权限校验功能（true=需要点赞或送礼才能点歌，false=所有用户都可以点歌）
+    like-minutes: 5 # 点赞授予的权限时长（分钟）
+    gift-minutes: 20 # 送礼授予的权限时长（分钟）
+
+logging:
+  config: classpath:log4j2.xml
+  level:
+    com.example.aimusicdispatcher.generator.TtsService: DEBUG
+    com.example.aimusicdispatcher.service.BarrageService: DEBUG

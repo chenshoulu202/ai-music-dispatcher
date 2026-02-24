@@ -1,9 +1,7 @@
 package com.example.aimusicdispatcher.connector;
 
-import com.example.aimusicdispatcher.model.dy.CastMethod;
-import com.example.aimusicdispatcher.model.barrage.BarrageRequest;
 import com.example.aimusicdispatcher.model.dy.DyMessage;
-import com.example.aimusicdispatcher.service.BarrageService;
+import com.example.aimusicdispatcher.dispatcher.MessageDispatcher;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,11 +20,11 @@ import java.util.List;
 public class DyWebSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper;
-    private final BarrageService barrageService;
+    private final MessageDispatcher messageDispatcher;
 
-    public DyWebSocketHandler(ObjectMapper objectMapper, BarrageService barrageService) {
+    public DyWebSocketHandler(ObjectMapper objectMapper, MessageDispatcher messageDispatcher) {
         this.objectMapper = objectMapper;
-        this.barrageService = barrageService;
+        this.messageDispatcher = messageDispatcher;
     }
 
     @Override
@@ -52,10 +50,18 @@ public class DyWebSocketHandler extends TextWebSocketHandler {
             if (jsonNode.isArray()) {
                 List<DyMessage> messages = objectMapper.convertValue(jsonNode, new TypeReference<List<DyMessage>>() {});
                 for (DyMessage dyMessage : messages) {
+                    log.info("Parsed DyMessage in handleTextMessage: method={}, userId={}, content={}", 
+                            dyMessage.getMethod(), 
+                            dyMessage.getUser() != null ? dyMessage.getUser().getId() : "unknown",
+                            dyMessage.getContent());
                     processMessage(dyMessage, session);
                 }
             } else {
                 DyMessage dyMessage = objectMapper.treeToValue(jsonNode, DyMessage.class);
+                log.info("Parsed DyMessage in handleTextMessage: method={}, userId={}, content={}", 
+                            dyMessage.getMethod(), 
+                            dyMessage.getUser() != null ? dyMessage.getUser().getId() : "unknown",
+                            dyMessage.getContent());
                 processMessage(dyMessage, session);
             }
         } catch (Exception e) {
@@ -76,50 +82,8 @@ public class DyWebSocketHandler extends TextWebSocketHandler {
         log.info("Processing DyMessage: id={}, method={}, user={}", 
                 dyMessage.getId(), dyMessage.getMethod(), dyMessage.getUser() != null ? dyMessage.getUser().getName() : "unknown");
 
-        if (dyMessage.getMethod() == null) {
-            log.warn("Message method is null, ignoring.");
-            return;
-        }
-
-        switch (dyMessage.getMethod()) {
-            case CHAT:
-                handleChatMessage(dyMessage);
-                break;
-            case GIFT:
-                handleGiftMessage(dyMessage);
-                break;
-            case LIKE:
-                handleLikeMessage(dyMessage);
-                break;
-            // Add other cases as needed
-            default:
-                log.debug("Unhandled message type: {}", dyMessage.getMethod());
-        }
-    }
-
-    private void handleChatMessage(DyMessage message) {
-        String userName = message.getUser() != null ? message.getUser().getName() : "Anonymous";
-        log.info("Chat message from {}: {}", userName, message.getContent());
-        
-        BarrageRequest request = new BarrageRequest();
-        request.setUser(userName);
-        request.setContent(message.getContent());
-        request.setTimestamp(System.currentTimeMillis());
-        
-        barrageService.processBarrage(request);
-    }
-
-    private void handleGiftMessage(DyMessage message) {
-        if (message.getGift() != null) {
-            log.info("Gift received from {}: {} x {}", 
-                    message.getUser() != null ? message.getUser().getName() : "Anonymous", 
-                    message.getGift().getName(), 
-                    message.getGift().getCount());
-        }
-    }
-
-    private void handleLikeMessage(DyMessage message) {
-        log.info("Like received from {}", message.getUser() != null ? message.getUser().getName() : "Anonymous");
+        // 将消息分发给 MessageDispatcher 处理
+        messageDispatcher.dispatch(dyMessage);
     }
 
     @Override

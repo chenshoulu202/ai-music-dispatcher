@@ -73,10 +73,16 @@ public class TtsService {
             log.error("Failed to create output directory {}: {}", outputDir, e.getMessage());
         }
 
-        // 3. 生成音频文件名和路径
+        // 3. 生成音频文件名和路径 (使用哈希值作为文件名的一部分，实现缓存)
         String audioFormat = ttsProperties.getAudioFormat() != null ? ttsProperties.getAudioFormat() : "mp3";
-        String audioFileName = "intro_" + musicId + "_" + UUID.randomUUID().toString() + "." + audioFormat;
+        String audioFileName = "intro_" + introTextHash + "." + audioFormat; // Use hash for filename
         Path audioFilePath = outputPath.resolve(audioFileName).normalize(); // Normalize the final path
+
+        // 检查是否已存在同名音频文件（基于哈希值）
+        if (Files.exists(audioFilePath)) {
+            log.info("Cached TTS audio found for hash: {}, reusing existing file: {}", introTextHash, audioFilePath.toString());
+            return audioFilePath.toString();
+        }
 
         // 4. 准备TTS参数
         String voice = ttsProperties.getVoice() != null ? ttsProperties.getVoice() : "zh-CN-XiaoxiaoNeural";
@@ -90,18 +96,40 @@ public class TtsService {
 
             // 5. 使用edge-tts命令行生成语音
             // edge-tts --voice zh-CN-XiaoxiaoNeural --rate=-15% --text "文本内容" --write-media 输出文件路径
-            String venvEdgeTtsPath = "/Users/chenshoulu/Downloads/dy1/.venv/bin/edge-tts";
-            
-            ProcessBuilder pb = new ProcessBuilder(
-                    venvEdgeTtsPath,
-                    "--voice", voice,
-                    "--rate=" + ratePercentage,
+            String edgeTtsExecutablePath = "/Users/chenshoulu/Downloads/dy1/.venv/bin/edge-tts";
+
+            String[] command = {
+                    edgeTtsExecutablePath,
                     "--text", cleanedText,
                     "--write-media", audioFilePath.toString()
-            );
+            };
 
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
+            Process process = Runtime.getRuntime().exec(command, null, new File(System.getProperty("user.dir")));
+
+            // Capture error stream
+            new Thread(() -> {
+                try (java.io.BufferedReader errorReader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        log.error("edge-tts STDERR: {}", line);
+                    }
+                } catch (java.io.IOException e) {
+                    log.error("Error reading edge-tts error stream", e);
+                }
+            }).start();
+
+            // Capture output stream (optional, but good for debugging)
+            new Thread(() -> {
+                try (java.io.BufferedReader outputReader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = outputReader.readLine()) != null) {
+                        log.info("edge-tts STDOUT: {}", line);
+                    }
+                } catch (java.io.IOException e) {
+                    log.error("Error reading edge-tts output stream", e);
+                }
+            }).start();
+
 
             int exitCode = process.waitFor();
             if (exitCode == 0) {
@@ -113,24 +141,16 @@ public class TtsService {
                     return audioFilePath.toString();
                 } else {
                     log.error("TTS audio file not found after generation: {}", audioFilePath.toString());
-                    return generateMockAudioPath(audioFilePath);
+                    return null; // Return null if file not found after generation
                 }
             } else {
                 log.error("edge-tts process exited with code {} for musicId: {}", exitCode, musicId);
-                return generateMockAudioPath(audioFilePath);
+                return null; // Return null if edge-tts process failed
             }
         } catch (IOException | InterruptedException e) {
             log.error("Error calling edge-tts for musicId {}: {}", musicId, e.getMessage(), e);
             Thread.currentThread().interrupt();
-            return generateMockAudioPath(audioFilePath);
+            return null; // Return null on exception
         }
-    }
-
-    /**
-     * 生成模拟音频文件路径（当edge-tts不可用时的备选方案）。
-     */
-    private String generateMockAudioPath(Path suggestedPath) {
-        log.warn("Edge-TTS unavailable, using mock TTS audio path: {}", suggestedPath.toAbsolutePath());
-        return suggestedPath.toAbsolutePath().toString();
     }
 }

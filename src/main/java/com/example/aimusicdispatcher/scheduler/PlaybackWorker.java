@@ -2,7 +2,11 @@ package com.example.aimusicdispatcher.scheduler;
 
 import com.example.aimusicdispatcher.entity.MusicLibrary;
 import com.example.aimusicdispatcher.model.playlist.PlayTask;
+import com.example.aimusicdispatcher.repository.IntroCacheRepository;
 import com.example.aimusicdispatcher.repository.MusicLibraryRepository;
+import com.example.aimusicdispatcher.generator.GeminiService;
+import com.example.aimusicdispatcher.generator.TtsService;
+import com.example.aimusicdispatcher.generator.TextCleaningService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -18,6 +22,9 @@ import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -28,13 +35,24 @@ public class PlaybackWorker implements Runnable {
 
     private final BlockingQueue<PlayTask> playQueue = new LinkedBlockingQueue<>();
     private final MusicLibraryRepository musicLibraryRepository;
-    // private final IntroCacheRepository introCacheRepository; // Unused for now
+    private final IntroCacheRepository introCacheRepository;
+    private final GeminiService geminiService;
+    private final TtsService ttsService;
+    private final TextCleaningService textCleaningService;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private Thread workerThread;
+    private final ExecutorService introGenerationPool = Executors.newFixedThreadPool(1); // Single thread for intro generation to avoid overloading TTS/Gemini
 
-    public PlaybackWorker(MusicLibraryRepository musicLibraryRepository) {
+    public PlaybackWorker(MusicLibraryRepository musicLibraryRepository,
+                          IntroCacheRepository introCacheRepository,
+                          GeminiService geminiService,
+                          TtsService ttsService,
+                          TextCleaningService textCleaningService) {
         this.musicLibraryRepository = musicLibraryRepository;
-        // this.introCacheRepository = introCacheRepository;
+        this.introCacheRepository = introCacheRepository;
+        this.geminiService = geminiService;
+        this.ttsService = ttsService;
+        this.textCleaningService = textCleaningService;
     }
 
     @PostConstruct
@@ -57,6 +75,21 @@ public class PlaybackWorker implements Runnable {
             }
         }
         log.info("PlaybackWorker thread stopped.");
+
+        log.info("Shutting down intro generation pool.");
+        introGenerationPool.shutdown();
+        try {
+            if (!introGenerationPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                introGenerationPool.shutdownNow();
+                if (!introGenerationPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                    log.error("Intro Generation Pool did not terminate.");
+                }
+            }
+        } catch (InterruptedException ie) {
+            introGenerationPool.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+        log.info("Intro Generation Pool shut down.");
     }
 
     public void addPlayTask(PlayTask task) {
@@ -168,9 +201,10 @@ public class PlaybackWorker implements Runnable {
 
     private void executeFfplay(String filePath) {
         try {
-            ProcessBuilder pb = new ProcessBuilder("ffplay", "-nodisp", "-autoexit", filePath);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
+            String ffplayPath = "/usr/local/bin/ffplay"; // Use the full path for ffplay
+            String[] command = {ffplayPath, "-nodisp", "-autoexit", filePath};
+
+            Process process = Runtime.getRuntime().exec(command, null, new File(System.getProperty("user.dir")));
 
             // 启动一个线程读取并忽略ffplay的输出，防止缓冲区填满导致进程阻塞
             Thread outputGobbler = new Thread(() -> {

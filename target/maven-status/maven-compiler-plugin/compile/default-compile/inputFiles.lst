@@ -5,8 +5,10 @@
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/connector/DyWebSocketHandler.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/entity/IntroCache.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/gemini/GeminiRequest.java
+/Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/service/PermissionService.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/scheduler/PlaybackWorker.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/dy/CastUser.java
+/Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/config/PermissionProperties.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/config/GlobalExceptionHandler.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/gemini/GeminiResponse.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/gemini/Part.java
@@ -21,6 +23,7 @@
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/AiMusicDispatcherApplication.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/connector/BarrageController.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/playlist/PlayTask.java
+/Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/util/AnsiColors.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/generator/TtsService.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/config/TtsProperties.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/generator/GeminiService.java
@@ -33,6 +36,7 @@
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/dy/CastMethod.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/dy/CastRtfContentType.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/entity/MusicLibrary.java
+/Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/dispatcher/MessageDispatcher.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/service/MusicSyncService.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/config/RestTemplateConfig.java
 /Users/chenshoulu/Downloads/dy1/src/main/java/com/example/aimusicdispatcher/model/dy/LiveRoom.java

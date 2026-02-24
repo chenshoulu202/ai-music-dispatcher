@@ -75,7 +75,7 @@ public class BarrageService {
     }
 
     public void processBarrage(BarrageRequest barrageRequest) {
-        log.debug("Processing barrage request: {}", barrageRequest);
+        log.info("Processing barrage request: {}", barrageRequest);
 
         Optional<String> songNameOptional = barrageFilterService.extractSongName(barrageRequest);
 
@@ -105,17 +105,23 @@ public class BarrageService {
                 log.info("Cached intro audio missing for song '{}', generating synchronously for playback queue.", songName);
                 try {
                     java.util.Map<String, String> result = CompletableFuture.supplyAsync(() -> {
+                        log.info("Calling GeminiService to generate intro text for song: {}", songName);
                         // 生成Gemini文案
                         String introText = geminiService.generateIntroText(requester, songName);
+                        log.info("GeminiService returned intro text: \'{}\'".concat(introText != null ? introText : "null"), introText);
 
                         // 清洗文案（移除敏感词和生僻字）
                         String cleanedText = textCleaningService.cleanIntroText(introText);
+                        log.info("Cleaned intro text: \'{}\'".concat(cleanedText != null ? cleanedText : "null"), cleanedText);
 
                         // 计算文案哈希值
                         String introTextHash = textCleaningService.hashIntroText(cleanedText);
+                        log.info("Intro text hash: {}", introTextHash);
 
+                        log.info("Calling TtsService to generate audio file for musicId: {}", music.getId());
                         // 生成TTS音频
                         String audioPath = ttsService.generateAudioFile(introText, music.getId());
+                        log.info("TtsService returned audio path: \'{}\'".concat(audioPath != null ? audioPath : "null"), audioPath);
 
                         java.util.Map<String, String> innerResult = new java.util.HashMap<>();
                         innerResult.put("introText", introText);
@@ -128,16 +134,22 @@ public class BarrageService {
                     String introText = result.get("introText");
                     String introTextHash = result.get("introTextHash");
                     String generatedAudioPath = result.get("audioPath");
+                    log.info("BarrageService received generatedAudioPath: \'{}\'".concat(generatedAudioPath != null ? generatedAudioPath : "null"), generatedAudioPath);
 
-                    IntroCache newIntroCache = new IntroCache();
-                    newIntroCache.setMusicId(music.getId());
-                    newIntroCache.setIntroText(introText); // 存储原始文案
-                    newIntroCache.setIntroTextHash(introTextHash); // 存储文案哈希值用于快速对比
-                    newIntroCache.setAudioPath(generatedAudioPath);
-                    newIntroCache.setUpdateTime(LocalDateTime.now());
-                    introCacheRepository.save(newIntroCache);
-                    log.info("Generated and cached intro audio for song '{}' at '{}' (hash: {}).", songName, generatedAudioPath, introTextHash);
-                    enqueuePlayTask(music, generatedAudioPath, requester); // Enqueue with generated path
+                    if (generatedAudioPath != null) {
+                        IntroCache newIntroCache = new IntroCache();
+                        newIntroCache.setMusicId(music.getId());
+                        newIntroCache.setIntroText(introText); // 存储原始文案
+                        newIntroCache.setIntroTextHash(introTextHash); // 存储文案哈希值用于快速对比
+                        newIntroCache.setAudioPath(generatedAudioPath);
+                        newIntroCache.setUpdateTime(LocalDateTime.now());
+                        introCacheRepository.save(newIntroCache);
+                        log.info("Generated and cached intro audio for song '{}' at '{}' (hash: {}).", songName, generatedAudioPath, introTextHash);
+                        enqueuePlayTask(music, generatedAudioPath, requester); // Enqueue with generated path
+                    } else {
+                        log.warn("TTS generation failed for song '{}', playing song without intro.", songName);
+                        enqueuePlayTask(music, null, requester); // Fallback to enqueue without intro if generation fails
+                    }
 
                 } catch (Exception ex) {
                     log.error("Failed to generate or cache intro audio for song '{}': {}", songName, ex.getMessage(), ex);
@@ -145,7 +157,7 @@ public class BarrageService {
                 }
             }
         } else {
-            log.debug("Received chat message from user '{}': '{}'", barrageRequest.getUser(), barrageRequest.getContent());
+            log.info("Received chat message from user '{}': '{}' (Permission system disabled, processing anyway)", barrageRequest.getUser(), barrageRequest.getContent());
         }
     }
 

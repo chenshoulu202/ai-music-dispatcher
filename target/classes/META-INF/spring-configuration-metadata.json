@@ -1,6 +1,11 @@
 {
   "groups": [
     {
+      "name": "app.permission",
+      "type": "com.example.aimusicdispatcher.config.PermissionProperties",
+      "sourceType": "com.example.aimusicdispatcher.config.PermissionProperties"
+    },
+    {
       "name": "gemini",
       "type": "com.example.aimusicdispatcher.config.GeminiProperties",
       "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties"
@@ -18,6 +23,24 @@
   ],
   "properties": [
     {
+      "name": "app.permission.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用权限校验功能 true: 需要点赞或送礼才能点歌 false: 所有用户都可以点歌",
+      "sourceType": "com.example.aimusicdispatcher.config.PermissionProperties"
+    },
+    {
+      "name": "app.permission.gift-minutes",
+      "type": "java.lang.Integer",
+      "description": "送礼授予的权限时长（分钟）",
+      "sourceType": "com.example.aimusicdispatcher.config.PermissionProperties"
+    },
+    {
+      "name": "app.permission.like-minutes",
+      "type": "java.lang.Integer",
+      "description": "点赞授予的权限时长（分钟）",
+      "sourceType": "com.example.aimusicdispatcher.config.PermissionProperties"
+    },
+    {
       "name": "gemini.api-key",
       "type": "java.lang.String",
       "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties"
@@ -25,14 +48,12 @@
     {
       "name": "gemini.api-url",
       "type": "java.lang.String",
-      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties",
-      "defaultValue": "https:\/\/generativelanguage.googleapis.com\/v1beta\/models\/gemini-2.0-flash:generateContent?key={apiKey}"
+      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties"
     },
     {
       "name": "gemini.system-prompt",
       "type": "java.lang.String",
-      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties",
-      "defaultValue": "你是一个幽默风趣的直播间DJ。请为点歌人[USER]点的歌曲[SONG]写一段30字内的口播。要自然、亲切，能引起观众共鸣。"
+      "sourceType": "com.example.aimusicdispatcher.config.GeminiProperties"
     },
     {
       "name": "music.local-path",

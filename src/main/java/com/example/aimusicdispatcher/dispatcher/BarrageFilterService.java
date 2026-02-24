@@ -22,7 +22,7 @@ public class BarrageFilterService {
     // (?:一首|个)? 可选的“一首”或“个”
     // .*?(.*?).*$ 匹配歌名（非贪婪）
     private static final Pattern SONG_REQUEST_PATTERN = Pattern.compile(
-            "(?i)^.*?(点歌|来首|播放|我想听|play|music)\\s*[:：]*\\s*(?:一首|个)?\\s*[\"'《「]?(.*?)[\"'》」!！?？\\s]*$"
+            "(?i)(?:(?:点歌|来首|播放|我想听|play|music|歌曲|唱|点|来)\s*[:：\\-_—,，]*\\s*)?(.*?)(?:\\s*[-—].*)?$"
     );
 
     /**
@@ -40,9 +40,9 @@ public class BarrageFilterService {
         Matcher matcher = SONG_REQUEST_PATTERN.matcher(content);
 
         if (matcher.matches()) {
-            String songName = matcher.group(2).trim();
+            String songName = matcher.group(1).trim();
             // 清洗歌名，去除特殊符号，只保留中文、英文、数字、空格、破折号和单引号
-            songName = songName.replaceAll("[^\\p{L}\\p{N}\\s-']", "").trim();
+            songName = songName.replaceAll("[^\\p{L}\\p{N}\\s-'《》]", "").trim();
             if (!songName.isEmpty()) {
                 log.info("Detected song request from user '{}' for song: '{}'", barrageRequest.getUser(), songName);
                 return Optional.of(songName);

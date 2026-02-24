@@ -8,4 +8,5 @@ public class CastRtfContent {
     private CastRtfContentType type;
     private String text;
     private String url;
+    private CastUser user; // Added to match frontend structure
 }

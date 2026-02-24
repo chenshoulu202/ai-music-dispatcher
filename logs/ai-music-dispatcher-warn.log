@@ -1,4 +1,0 @@
-2026-02-23 09:07:11.533 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-02-23 09:07:11.535 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
-2026-02-23 09:07:14.085 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-23 09:07:34.148 [http-nio-8080-exec-1] WARN  com.example.aimusicdispatcher.connector.DyWebSocketHandler - Message method is null, ignoring.
