@@ -32,6 +32,55 @@ AI Music Dispatcher 是一个针对直播间的智能音乐和弹幕处理系统
 - **灵活更新**: 可根据需要在闲时自动生成新的口播变体，保持内容新鲜度
 - **零停机更新**: 定时任务与实时播放异步执行，不影响直播间服务
 
+### 🤖 AI 大模型定制化
+现在支持多种 AI 大模型选择！默认配置使用 Google Gemini，但你可以轻松替换为其他喜欢的大模型。
+
+**支持的大模型方案：**
+- ✅ **Google Gemini** (默认) - Google 官方高性能模型，API: `https://generativelanguage.googleapis.com`
+- ✅ **OpenAI GPT 系列** - GPT-4, GPT-3.5 等，API: `https://api.openai.com/v1/chat/completions`
+- ✅ **Anthropic Claude** - 优秀的文本生成能力，API: `https://api.anthropic.com/v1/messages`
+- ✅ **阿里云通义千问** - 国内优质选择，API: `https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation`
+- ✅ **讯飞星火大模型** - 国内另一选择，API: `https://spark-api.xf-yun.com/v1/chat/completions`
+- ✅ **其他任何兼容 API 的大模型** - 自定义扩展
+
+**快速替换步骤：**
+
+1. **修改 `application.yml` 中的 API 配置**
+   ```yaml
+   # 替换为 OpenAI
+   gemini:
+     api-key: "sk-your-openai-api-key"
+     api-url: https://api.openai.com/v1/chat/completions
+     system-prompt: "你是一个幽默风趣的直播间DJ..."
+   
+   # 或替换为阿里通义千问
+   gemini:
+     api-key: "sk-your-dashscope-api-key"
+     api-url: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+   ```
+
+2. **修改 `GeminiService.java` 中的请求/响应处理**（如果 API 格式不同）
+   - 调整 `buildGeminiRequest()` 方法以适配目标模型的请求格式
+   - 修改 `extractTextFromGeminiResponse()` 方法以解析目标模型的响应格式
+
+3. **重新编译运行**
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
+   ```
+
+**各模型优缺点对比：**
+
+| 模型 | 优点 | 缺点 | 适合场景 |
+|------|------|------|---------|
+| **Google Gemini** | 免费配额足、性能好、多模态 | 需国际网、API稍复杂 | 个人使用、低成本需求 |
+| **OpenAI GPT** | 强大、稳定、社区大 | 收费、需国际支付 | 专业应用、商业化 |
+| **Claude** | 生成质量高、理解力强 | 收费、响应较慢 | 内容质量优先 |
+| **通义千问** | 国内直连、支持中文优、便宜 | 免费额度相对少 | 国内用户首选 |
+| **讯飞星火** | 国内支持、成本低 | 模型能力有限 | 成本优先 |
+
+**完整的扩展指南请参考 [CONTRIBUTING.md](CONTRIBUTING.md)**
+
 ### 🎤 TTS 工具定制化
 - **开放式设计**: `TtsService` 采用插件化架构，目前支持 Edge TTS
 - **易于扩展**: 用户可以自行实现自定义 TTS 提供商（如果使用商业 TTS 服务）

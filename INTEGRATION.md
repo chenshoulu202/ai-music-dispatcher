@@ -67,12 +67,43 @@ npm run dev
 
 本项目提供以下核心功能：
 
-- 🎤 AI 口播生成（Gemini API）
+- 🎤 AI 口播生成（支持 Gemini、OpenAI、Claude、通义千问等多种大模型）
 - 🔊 文本转语音（Edge TTS）
 - 💬 弹幕处理和分发
 - 🎵 音乐库管理
 - 👥 权限控制系统
 - 📊 数据缓存和优化
+
+### 🤖 AI 大模型选择与配置
+
+系统默认使用 Google Gemini，但支持切换到任何喜欢的大模型。
+
+**快速配置（无需代码修改）：**
+
+在 `application.yml` 中更新配置即可：
+
+```yaml
+# OpenAI GPT
+gemini:
+  api-key: "sk-your-openai-key"
+  api-url: https://api.openai.com/v1/chat/completions
+
+# 阿里通义千问
+gemini:
+  api-key: "sk-your-dashscope-key"
+  api-url: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+
+# Anthropic Claude
+gemini:
+  api-key: "sk-ant-your-key"
+  api-url: https://api.anthropic.com/v1/messages
+```
+
+**需要代码修改的大模型：** 
+
+如果你的大模型 API 格式与 Gemini 差异较大，请参考 [CONTRIBUTING.md](CONTRIBUTING.md#-扩展-ai-大模型支持) 的完整开发指南。
+
+更多详情见 [README.md 的大模型定制化章节](README.md#-ai-大模型定制化)
 
 ### 获取后端代码
 

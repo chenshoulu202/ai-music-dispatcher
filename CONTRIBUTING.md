@@ -135,6 +135,199 @@ git push origin feature/your-feature-name
 2. 编辑 `README.md` 或其他文档文件
 3. 提交 PR 并描述你的改进
 
+## 🤖 扩展 AI 大模型支持
+
+如果你想添加对新 AI 大模型的支持，以下是完整指南：
+
+### 方案 A：配置方式替换（推荐 - 仅配置，无需编码）
+
+对于大多数 API 兼容或 JSON 格式相似的模型，你可以直接在 `application.yml` 中配置，无需修改代码：
+
+1. **在 `application.yml` 中更新 API 配置**
+   ```yaml
+   gemini:
+     api-key: "your-new-model-api-key"
+     api-url: https://your-model-api-endpoint
+     system-prompt: "你的自定义提示词"
+   ```
+
+2. **测试连接**
+   ```bash
+   mvn spring-boot:run
+   # 查看日志确认 API 调用成功
+   ```
+
+**适用场景**: APIs 格式相似的模型（OpenAI、通义千问、讯飞星火等）
+
+### 方案 B：代码方式扩展（用于完全不同的 API 格式）
+
+如果新模型的 API 格式与 Gemini 差异很大（请求/响应结构不同），需要修改 `GeminiService.java`：
+
+1. **修改请求构建方法 `buildGeminiRequest()`**
+   ```java
+   // src/main/java/com/example/aimusicdispatcher/generator/GeminiService.java
+   
+   private YourModelRequest buildYourModelRequest(String prompt) {
+       // 根据你的模型 API 文档构建请求对象
+       YourModelRequest request = new YourModelRequest();
+       request.setPrompt(prompt);
+       request.setModel("your-model-name");
+       request.setMaxTokens(50);
+       return request;
+   }
+   ```
+
+2. **修改响应解析方法 `extractTextFromGeminiResponse()`**
+   ```java
+   private String extractTextFromYourModelResponse(YourModelResponse response) {
+       // 根据你的模型 API 文档解析响应
+       if (response.getResult() != null) {
+           return response.getResult().getText();
+       }
+       return FALLBACK_INTRO_TEXT;
+   }
+   ```
+
+3. **在 `generateIntroText()` 方法中使用新的构建和解析方法**
+   ```java
+   public String generateIntroText(String user, String songName) {
+       // ... 准备 prompt ...
+       
+       YourModelRequest request = buildYourModelRequest(prompt);
+       HttpEntity<YourModelRequest> entity = new HttpEntity<>(request, headers);
+       
+       // ... API 调用 ...
+       
+       return extractTextFromYourModelResponse(response.getBody());
+   }
+   ```
+
+4. **创建对应的模型 DTO 类**
+   - 在 `src/main/java/com/example/aimusicdispatcher/model/` 下创建新文件夹（如 `yourmodel/`）
+   - 创建对应的请求和响应 DTO 类
+   - 参考现有的 `gemini/` 文件夹结构
+
+5. **测试和验证**
+   ```bash
+   mvn clean test
+   mvn spring-boot:run
+   ```
+
+6. **提交 PR**（如果你想贡献给项目）
+   - 遵循提交信息规范
+   - 添加测试用例
+   - 更新文档说明
+
+### 完整示例：集成 OpenAI GPT
+
+以下是一个完整的集成示例，展示如何添加 OpenAI GPT 支持：
+
+**Step 1: 创建请求/响应模型**
+```java
+// src/main/java/com/example/aimusicdispatcher/model/openai/OpenAIMessage.java
+public class OpenAIMessage {
+    private String role;
+    private String content;
+    // Getters/Setters...
+}
+
+// src/main/java/com/example/aimusicdispatcher/model/openai/OpenAIRequest.java
+public class OpenAIRequest {
+    private String model;
+    private List<OpenAIMessage> messages;
+    private double temperature;
+    private int max_tokens;
+    // Getters/Setters...
+}
+
+// src/main/java/com/example/aimusicdispatcher/model/openai/OpenAIResponse.java
+public class OpenAIResponse {
+    private List<Choice> choices;
+    
+    public static class Choice {
+        private OpenAIMessage message;
+        // Getters/Setters...
+    }
+    // Getters/Setters...
+}
+```
+
+**Step 2: 修改 GeminiService**
+```java
+// 在 GeminiService 中添加 OpenAI 支持
+private String extractTextFromOpenAIResponse(OpenAIResponse response) {
+    if (response.getChoices() != null && !response.getChoices().isEmpty()) {
+        return response.getChoices().get(0).getMessage().getContent();
+    }
+    return FALLBACK_INTRO_TEXT;
+}
+```
+
+**Step 3: 配置**
+```yaml
+gemini:
+  api-key: "sk-your-openai-key"
+  api-url: https://api.openai.com/v1/chat/completions
+  system-prompt: "你是一个幽默风趣的直播间DJ..."
+```
+
+## 🎤 扩展 TTS 支持
+
+类似地，如果你想添加新的 TTS 提供商：
+
+### 当前 TTS 架构
+
+```
+TtsService (接口)
+├── EdgeTtsService (Edge TTS 实现)
+└── [你的自定义 TTS 实现]
+```
+
+### 添加新的 TTS 提供商
+
+1. **创建新的 TTS 实现类**
+   ```java
+   // src/main/java/com/example/aimusicdispatcher/service/YourTtsService.java
+   @Service
+   public class YourTtsService implements TtsService {
+       @Override
+       public void synthesizeAndSave(String text, String outputPath) {
+           // 你的 TTS 实现
+       }
+   }
+   ```
+
+2. **在配置中选择 TTS 提供商**
+   ```yaml
+   tts:
+     provider: your-tts-provider
+   ```
+
+3. **在 `TtsFactory.java` 中注册新提供商**（如果存在）
+   ```java
+   if ("your-tts-provider".equals(provider)) {
+       return new YourTtsService(config);
+   }
+   ```
+
+## 📦 添加新依赖
+
+如果你的大模型集成需要新的 Maven 依赖：
+
+1. **在 `pom.xml` 中添加**
+   ```xml
+   <dependency>
+       <groupId>com.your.library</groupId>
+       <artifactId>your-sdk</artifactId>
+       <version>1.0.0</version>
+   </dependency>
+   ```
+
+2. **更新文档** - 在 README 的依赖部分添加说明
+
+3. **提交 PR** - 包含依赖版本说明和使用说明
+
+
 ## 🧪 测试
 
 在提交 PR 前，请进行充分的测试：

@@ -106,9 +106,10 @@ spring:
     hibernate:
       ddl-auto: update  # 首次运行使用 update，后续改为 validate
 
-# Gemini API 配置
+# Gemini API 配置（可替换为其他大模型）
 gemini:
   api-key: YOUR_GEMINI_API_KEY
+  api-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}
   system-prompt: "你是一个幽默风趣的直播间DJ..."  # 可选自定义
 
 # 音乐库配置
@@ -129,6 +130,47 @@ app:
     like-minutes: 5
     gift-minutes: 20
 ```
+
+#### 🤖 大模型替换指南
+
+你可以将 Gemini 替换为任何喜欢的大模型，无需修改代码！只需在 `application.yml` 中调整配置即可。
+
+**常用大模型快速配置：**
+
+**OpenAI GPT-4 / GPT-3.5:**
+```yaml
+gemini:
+  api-key: "sk-your-openai-api-key"
+  api-url: https://api.openai.com/v1/chat/completions
+  system-prompt: "你是一个幽默风趣的直播间DJ..."
+```
+
+**阿里通义千问:**
+```yaml
+gemini:
+  api-key: "sk-your-dashscope-api-key"
+  api-url: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+  system-prompt: "你是一个幽默风趣的直播间DJ..."
+```
+
+**Anthropic Claude:**
+```yaml
+gemini:
+  api-key: "sk-ant-your-claude-api-key"
+  api-url: https://api.anthropic.com/v1/messages
+  system-prompt: "你是一个幽默风趣的直播间DJ..."
+```
+
+**讯飞星火大模型:**
+```yaml
+gemini:
+  api-key: "your-sparkdesk-api-key"
+  api-url: https://spark-api.xf-yun.com/v1/chat/completions
+  system-prompt: "你是一个幽默风趣的直播间DJ..."
+```
+
+> 💡 **更多信息**: 如果你的模型 API 请求/响应格式与 Gemini 完全不同，可能需要修改 `GeminiService.java`。详见 [README.md](README.md#-ai-大模型定制化) 的完整指南。
+
 
 ### 前端配置 (.env)
 
